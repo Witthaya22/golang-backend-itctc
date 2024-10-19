@@ -1,0 +1,37 @@
+server:
+  port: 8080
+  allowOrigins:
+    - "*"
+  bodyLimit: "10M" # MiB
+  timeout: 30 # Seconds
+ 
+# oauth2:
+#   playerRedirectUrl: "http://localhost:8080/v1/oauth2/google/player/login/callback"
+#   adminRedirectUrl: "http://localhost:8080/v1/oauth2/google/admin/login/callback"
+#   clientId: "xxxxx.apps.googleusercontent.com"
+#   clientSecret: "xxxxx"
+#   endpoints:
+#     authUrl: "https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force"
+#     tokenUrl: "https://oauth2.googleapis.com/token"
+#     deviceAuthUrl: "https://oauth2.googleapis.com/device/code"
+#   scopes:
+#     - "https://www.googleapis.com/auth/userinfo.email"
+#     - "https://www.googleapis.com/auth/userinfo.profile"
+#   userInfoUrl: "https://www.googleapis.com/oauth2/v2/userinfo"
+#   revokeUrl: "https://accounts.google.com/o/oauth2/revoke"
+  
+database:
+  host: localhost
+  port: 4444
+  user: postgres
+  password: 123456
+  dbname: backend_postgres_itctc
+  sslmode: disable
+  schema: public
+
+jwt:
+  secretKey: "XEzuqv92msgssuNU"
+  adminKey: "h7W7pHYw8S5pR62Y"
+  apiKey: "DN3rHXRy63zJXywK"
+  accessExpires: 86400 # seconds
+  refreshExpires: 604800 # seconds
