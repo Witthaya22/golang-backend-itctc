@@ -1,9 +1,13 @@
 server:
+  host: 127.0.0.1
   port: 8080
+  name: ITCTCBACKEND
   allowOrigins:
     - "*"
-  bodyLimit: "10M" # MiB
+  bodyLimit: 10490000
   timeout: 30 # Seconds
+  readTimeout: 30 # Seconds
+  version: v0.0.1
  
 # oauth2:
 #   playerRedirectUrl: "http://localhost:8080/v1/oauth2/google/player/login/callback"

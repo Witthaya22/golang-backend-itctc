@@ -17,10 +17,14 @@ type (
 	}
 
 	Server struct {
+		Host         string        `mapstructure:"host" validate:"required"`
 		Port         int           `mapstructure:"port" validate:"required"`
+		Name         string        `mapstructure:"name" validate:"required"`
 		AllowOrigins []string      `mapstructure:"allowOrigins" validate:"required"`
+		ReadTimeout  time.Duration `mapstructure:"readTimeout" validate:"required"`
 		Timeout      time.Duration `mapstructure:"timeout" validate:"required"`
-		BodyLimit    string        `mapstructure:"bodyLimit" validate:"required"`
+		BodyLimit    int64         `mapstructure:"bodyLimit" validate:"required"`
+		Version      string        `mapstructure:"version" validate:"required"`
 	}
 
 	Database struct {
