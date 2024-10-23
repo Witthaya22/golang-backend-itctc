@@ -39,12 +39,17 @@ func NewServer(conf *config.Config, db *gorm.DB) IServer {
 
 func (s *server) Start() {
 	// middleware
+	middleware := InitMiddleware(s)
+	s.app.Use(middleware.Logger())
+	s.app.Use(middleware.Cors())
 
 	// modules
 	v1 := s.app.Group("/v1")
-	modules := InitModule(v1, s)
+	modules := InitModule(v1, s, middleware)
 
 	modules.CheckAppModule()
+
+	s.app.Use(middleware.RouterCheck())
 
 	// Graceful shutdown ค่อยๆปิดระบบทุกอย่าง
 	c := make(chan os.Signal, 1)
