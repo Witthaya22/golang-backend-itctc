@@ -1,2 +1,0 @@
-{"time":"2024-10-21 20:28:42","ip":"127.0.0.1","method":"GET","status_code":200,"path":"/v1","query":null,"body":null,"response":{"name":"ITCTCBACKEND","version":"v0.0.1"}}
-{"time":"2024-10-21 20:28:50","ip":"127.0.0.1","method":"GET","status_code":200,"path":"/v1","query":null,"body":null,"response":{"name":"ITCTCBACKEND","version":"v0.0.1"}}
