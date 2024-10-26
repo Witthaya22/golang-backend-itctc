@@ -48,5 +48,6 @@ func (m *moduleFactory) UserModule() {
 
 	router := m.r.Group("/user")
 
-	router.Post("/", handler.SignUpUser)
+	router.Post("/signup", handler.SignUpUser)
+	router.Post("/login", handler.SignIn)
 }

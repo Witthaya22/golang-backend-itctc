@@ -6,10 +6,12 @@ import (
 	"github.com/Witthaya22/golang-backend-itctc/config"
 	"github.com/Witthaya22/golang-backend-itctc/entities"
 	userrepository "github.com/Witthaya22/golang-backend-itctc/modules/users/userRepository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type IUserUsecase interface {
 	RegisterUser(req *entities.UserRegisterReq) (*entities.User, error)
+	GetPassport(req *entities.UserCredential) (*entities.UserPassport, error)
 }
 
 type userUsecase struct {
@@ -52,4 +54,27 @@ func (u *userUsecase) RegisterUser(req *entities.UserRegisterReq) (*entities.Use
 	}
 
 	return user, nil
+}
+
+func (u *userUsecase) GetPassport(req *entities.UserCredential) (*entities.UserPassport, error) {
+	// หา user ด้วย userID
+	user, err := u.userRepository.FindOneUserByUserID(req.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("user not found: %v", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.UserPassword)); err != nil {
+		return nil, fmt.Errorf("invalid password: %v", err)
+	}
+
+	passport := &entities.UserPassport{
+		User: &entities.UserResponse{
+			UserID:        user.UserID,
+			UserFirstName: user.UserFirstName,
+			UserLastName:  user.UserLastName,
+			Role:          user.Role,
+		},
+		Token: nil,
+	}
+	return passport, nil
 }

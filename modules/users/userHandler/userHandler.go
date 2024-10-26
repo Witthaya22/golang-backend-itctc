@@ -14,10 +14,12 @@ type userHandlerErrCode string
 
 const (
 	signUpUserErrCode userHandlerErrCode = "user-001"
+	signInErrCode     userHandlerErrCode = "user-002"
 )
 
 type IUserHandler interface {
 	SignUpUser(c *fiber.Ctx) error
+	SignIn(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -80,5 +82,30 @@ func (h *userHandler) SignUpUser(c *fiber.Ctx) error {
 	return customresponse.NewResponse(c).Success(
 		fiber.StatusCreated,
 		result,
+	).Res()
+}
+
+func (h *userHandler) SignIn(c *fiber.Ctx) error {
+	req := new(entities.UserCredential)
+	if err := c.BodyParser(req); err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(signInErrCode),
+			err.Error(),
+		).Res()
+	}
+
+	passport, err := h.userUsecase.GetPassport(req)
+	if err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrNotFound.Code,
+			string(signInErrCode),
+			err.Error(),
+		).Res()
+	}
+
+	return customresponse.NewResponse(c).Success(
+		fiber.StatusOK,
+		passport,
 	).Res()
 }

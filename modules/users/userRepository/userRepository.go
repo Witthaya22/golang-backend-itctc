@@ -12,6 +12,7 @@ type IUserRepository interface {
 	RegisterUser(user *entities.User) error
 	FindByUserID(userID string) (*entities.User, error)
 	FindDepartmentByID(departmentID string) (*entities.Department, error)
+	FindOneUserByUserID(userID string) (*entities.UserCredentialCheck, error)
 }
 
 type userRepository struct {
@@ -50,4 +51,16 @@ func (r *userRepository) FindDepartmentByID(departmentID string) (*entities.Depa
 		return nil, fmt.Errorf("error finding department: %v", err)
 	}
 	return department, nil
+}
+
+func (r *userRepository) FindOneUserByUserID(userID string) (*entities.UserCredentialCheck, error) {
+	user := new(entities.UserCredentialCheck)
+	err := r.db.Table("users").Where("user_id = ?", userID).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("user not found with ID: %s", userID)
+		}
+		return nil, fmt.Errorf("error finding user: %v", err)
+	}
+	return user, nil
 }
