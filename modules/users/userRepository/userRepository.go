@@ -1,8 +1,10 @@
 package userrepository
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/Witthaya22/golang-backend-itctc/entities"
 	"gorm.io/gorm"
@@ -13,6 +15,7 @@ type IUserRepository interface {
 	FindByUserID(userID string) (*entities.User, error)
 	FindDepartmentByID(departmentID string) (*entities.Department, error)
 	FindOneUserByUserID(userID string) (*entities.UserCredentialCheck, error)
+	InsertOauthUser(oauth *entities.Oauth) error
 }
 
 type userRepository struct {
@@ -63,4 +66,15 @@ func (r *userRepository) FindOneUserByUserID(userID string) (*entities.UserCrede
 		return nil, fmt.Errorf("error finding user: %v", err)
 	}
 	return user, nil
+}
+
+func (r *userRepository) InsertOauthUser(oauth *entities.Oauth) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := r.db.WithContext(ctx).Create(oauth).Error; err != nil {
+		return fmt.Errorf("insert oauth failed: %v", err)
+	}
+
+	return nil
 }

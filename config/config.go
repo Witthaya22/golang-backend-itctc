@@ -13,7 +13,7 @@ type (
 	Config struct {
 		Server   *Server   `mapstructure:"server" validate:"required"`
 		Database *Database `mapstructure:"database" validate:"required"`
-		// Jwt      *Jwt      `mapstructure:"jwt" validate:"required"`
+		Jwt      *Jwt      `mapstructure:"jwt" validate:"required"`
 	}
 
 	Server struct {
@@ -37,13 +37,13 @@ type (
 		Schema   string `mapstructure:"schema" validate:"required"`
 	}
 
-	// Jwt struct {
-	// 	SecretKey      string        `mapstructure:"secretKey" validate:"required"`
-	// 	adminKey       string        `mapstructure:"adminKey" validate:"required"`
-	// 	apiKey         string        `mapstructure:"apiKey" validate:"required"`
-	// 	AccessExpires  time.Duration `mapstructure:"accessExpires" validate:"required"`
-	// 	RefreshExpires time.Duration `mapstructure:"refreshExpires" validate:"required"`
-	// }
+	Jwt struct {
+		SecretKey      string        `mapstructure:"secretKey" validate:"required"`
+		adminKey       string        `mapstructure:"adminKey" validate:"required"`
+		apiKey         string        `mapstructure:"apiKey" validate:"required"`
+		AccessExpires  time.Duration `mapstructure:"accessExpires" validate:"required"`
+		RefreshExpires time.Duration `mapstructure:"refreshExpires" validate:"required"`
+	}
 )
 
 var (

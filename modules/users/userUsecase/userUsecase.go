@@ -6,6 +6,8 @@ import (
 	"github.com/Witthaya22/golang-backend-itctc/config"
 	"github.com/Witthaya22/golang-backend-itctc/entities"
 	userrepository "github.com/Witthaya22/golang-backend-itctc/modules/users/userRepository"
+	"github.com/Witthaya22/golang-backend-itctc/pkg/auth"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -57,7 +59,6 @@ func (u *userUsecase) RegisterUser(req *entities.UserRegisterReq) (*entities.Use
 }
 
 func (u *userUsecase) GetPassport(req *entities.UserCredential) (*entities.UserPassport, error) {
-	// หา user ด้วย userID
 	user, err := u.userRepository.FindOneUserByUserID(req.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("user not found: %v", err)
@@ -67,6 +68,24 @@ func (u *userUsecase) GetPassport(req *entities.UserCredential) (*entities.UserP
 		return nil, fmt.Errorf("invalid password: %v", err)
 	}
 
+	accessToken, err := auth.NewAuth(auth.Access, *u.conf.Jwt, &entities.UserClaims{
+		UserID: user.UserID,
+		Role:   user.Role,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error creating access token: %v", err)
+	}
+
+	refreshToken, err := auth.NewAuth(auth.Refresh, *u.conf.Jwt, &entities.UserClaims{
+		UserID: user.UserID,
+		Role:   user.Role,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error creating refresh token: %v", err)
+	}
+
+	tokenID := uuid.New().String()
+
 	passport := &entities.UserPassport{
 		User: &entities.UserResponse{
 			UserID:        user.UserID,
@@ -74,7 +93,21 @@ func (u *userUsecase) GetPassport(req *entities.UserCredential) (*entities.UserP
 			UserLastName:  user.UserLastName,
 			Role:          user.Role,
 		},
-		Token: nil,
+		Token: &entities.UserToken{
+			ID:           tokenID,
+			AccessToken:  accessToken.SingToken(),
+			RefreshToken: refreshToken.SingToken(),
+		},
 	}
+
+	if err := u.userRepository.InsertOauthUser(&entities.Oauth{
+		ID:           tokenID,
+		UserID:       user.UserID,
+		AccessToken:  accessToken.SingToken(),
+		RefreshToken: refreshToken.SingToken(),
+	}); err != nil {
+		return nil, fmt.Errorf("failed to insert oauth: %v", err)
+	}
+
 	return passport, nil
 }

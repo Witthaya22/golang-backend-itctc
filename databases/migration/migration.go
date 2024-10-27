@@ -26,6 +26,7 @@ func createBaseTables(db databases.IDatabase) {
 		&entities.Activity{},
 		&entities.ActivityResults{},
 		&entities.ActivityDetails{},
+		&entities.Oauth{},
 	}
 
 	for _, table := range tables {
@@ -54,6 +55,8 @@ func addForeignKeys(db databases.IDatabase) {
 		{"activity_results", "fk_departments_activities", "ALTER TABLE activity_results ADD CONSTRAINT fk_departments_activities FOREIGN KEY (department_id) REFERENCES departments(department_id)"},
 		{"activity_details", "fk_users_activity_details", "ALTER TABLE activity_details ADD CONSTRAINT fk_users_activity_details FOREIGN KEY (user_id) REFERENCES users(user_id)"},
 		{"activity_details", "fk_activities_activity_details", "ALTER TABLE activity_details ADD CONSTRAINT fk_activities_activity_details FOREIGN KEY (activity_id) REFERENCES activities(activity_id)"},
+		// เพิ่มการเชื่อมจาก users ไป oauths
+		{"oauths", "fk_users_oauth", "ALTER TABLE oauths ADD CONSTRAINT fk_users_oauth FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE"},
 	}
 
 	for _, fk := range foreignKeys {

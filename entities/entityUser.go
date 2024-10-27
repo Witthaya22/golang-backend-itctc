@@ -9,18 +9,19 @@ import (
 )
 
 type User struct {
-	UserID        string    `gorm:"primaryKey;unique;not null" json:"userID"`
-	UserFirstName string    `gorm:"type:varchar(64);not null" json:"userFirstName"`
-	UserLastName  string    `gorm:"type:varchar(64);not null" json:"userLastName"`
-	UserPassword  string    `gorm:"type:varchar(256);not null" json:"userPassword"`
-	UserImage     string    `gorm:"type:varchar(256)" json:"userImage"`
-	DepartmentID  string    `gorm:"type:varchar(64);not null" json:"departmentID"`
-	Role          string    `gorm:"type:varchar(20);not null" json:"role"`
-	AccessToken   string    `gorm:"type:varchar(256);" json:"accessToken"`
-	RefreshToken  string    `gorm:"type:varchar(256);" json:"refreshToken"`
-	IsArchived    bool      `gorm:"not null;default:false" json:"isArchived"`
-	CreatedAt     time.Time `gorm:"not null;autoCreateTime" json:"createdAt"`
-	UpdatedAt     time.Time `gorm:"not null;autoUpdateTime" json:"updatedAt"`
+	UserID        string `gorm:"primaryKey;unique;not null" json:"userID"`
+	UserFirstName string `gorm:"type:varchar(64);not null" json:"userFirstName"`
+	UserLastName  string `gorm:"type:varchar(64);not null" json:"userLastName"`
+	UserPassword  string `gorm:"type:varchar(256);not null" json:"userPassword"`
+	UserImage     string `gorm:"type:varchar(256)" json:"userImage"`
+	DepartmentID  string `gorm:"type:varchar(64);not null" json:"departmentID"`
+	Role          string `gorm:"type:varchar(20);not null" json:"role"`
+	// AccessToken   string    `gorm:"type:varchar(256);" json:"accessToken"`
+	// RefreshToken  string    `gorm:"type:varchar(256);" json:"refreshToken"`
+	IsArchived bool      `gorm:"not null;default:false" json:"isArchived"`
+	CreatedAt  time.Time `gorm:"not null;autoCreateTime" json:"createdAt"`
+	UpdatedAt  time.Time `gorm:"not null;autoUpdateTime" json:"updatedAt"`
+	// Oauth         []Oauth   `gorm:"foreignKey:UserID" json:"oauth"`
 }
 
 type UserRegisterReq struct {
@@ -75,7 +76,12 @@ type UserPassport struct {
 }
 
 type UserToken struct {
-	UserID       string `json:"userID"`
+	ID           string `json:"id" `
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
+}
+
+type UserClaims struct {
+	UserID string `json:"userID"`
+	Role   string `json:"role"`
 }
