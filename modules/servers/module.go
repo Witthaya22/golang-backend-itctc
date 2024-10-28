@@ -50,4 +50,5 @@ func (m *moduleFactory) UserModule() {
 
 	router.Post("/signup", handler.SignUpUser)
 	router.Post("/login", handler.SignIn)
+	router.Post("/refresh", handler.RefreshPassport)
 }

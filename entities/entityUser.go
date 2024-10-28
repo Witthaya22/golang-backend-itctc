@@ -85,3 +85,22 @@ type UserClaims struct {
 	UserID string `json:"userID"`
 	Role   string `json:"role"`
 }
+
+type UserRefresnCredential struct {
+	RefreshToken string `json:"refreshToken" form:"refreshToken"`
+}
+
+type UserRefreshCredential struct {
+	RefreshToken string `json:"refreshToken"`
+}
+
+type UserProfile struct {
+	UserID        string `gorm:"column:user_id;primaryKey"`
+	UserFirstName string `gorm:"column:user_first_name"`
+	UserLastName  string `gorm:"column:user_last_name"`
+	Role          string `gorm:"column:role"`
+}
+
+func (UserProfile) TableName() string {
+	return "users"
+}

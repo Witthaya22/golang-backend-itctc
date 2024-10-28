@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"time"
@@ -45,6 +46,51 @@ func (a *auth) SingToken() string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, a.mapClaims)
 	ss, _ := token.SignedString([]byte(a.conf.SecretKey))
 	return ss
+}
+
+func ParseToken(tokenString string, conf config.Jwt) (*authMapClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &authMapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(conf.SecretKey), nil
+	})
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenMalformed) {
+			return nil, fmt.Errorf("malformed token: %v", err)
+		} else if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, fmt.Errorf("token expired: %v", err)
+		} else {
+			return nil, fmt.Errorf("invalid token: %v", err)
+		}
+	}
+
+	if claims, ok := token.Claims.(*authMapClaims); ok {
+		return claims, nil
+	} else {
+		return nil, fmt.Errorf("invalid token claims: %v", err)
+	}
+}
+
+func RepeatToken(conf config.Jwt, claims *entities.UserClaims, exp int64) string {
+	obj := &auth{
+		conf: conf,
+		mapClaims: &authMapClaims{
+			Claims: claims,
+			RegisteredClaims: jwt.RegisteredClaims{
+				Issuer:  "backend-itctc",
+				Subject: "refresh-token",
+				Audience: []string{
+					"admin",
+					"user",
+				},
+				ExpiresAt: jwtTimeRepeatAdapter(exp),
+				NotBefore: jwt.NewNumericDate(time.Now()),
+				IssuedAt:  jwt.NewNumericDate(time.Now()),
+			},
+		},
+	}
+	return obj.SingToken()
 }
 
 func NewAuth(tokenType TokenType, conf config.Jwt, claims *entities.UserClaims) (IAuth, error) {
