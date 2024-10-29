@@ -21,6 +21,7 @@ type IUserRepository interface {
 	UpdateOauth(req *entities.UserToken) error
 	// GetProfile(userID string) (*entities.User, error)
 	GetProfile(userID string) (*entities.UserProfile, error)
+	DeleteOauth(oauthId string) error
 }
 
 type userRepository struct {
@@ -170,4 +171,13 @@ func (r *userRepository) GetProfile(userID string) (*entities.UserProfile, error
 	}
 	log.Printf("Found user: %+v", user)
 	return &user, nil
+}
+
+func (r *userRepository) DeleteOauth(oauthId string) error {
+
+	if err := r.db.Debug().Where("id = ?", oauthId).Delete(&entities.Oauth{}).Error; err != nil {
+		return fmt.Errorf("delete oauth failed: %v", err)
+	}
+
+	return nil
 }

@@ -16,12 +16,14 @@ const (
 	signUpUserErrCode      userHandlerErrCode = "user-001"
 	signInErrCode          userHandlerErrCode = "user-002"
 	refreshPassportErrCode userHandlerErrCode = "user-003"
+	signOutErrCode         userHandlerErrCode = "user-004"
 )
 
 type IUserHandler interface {
 	SignUpUser(c *fiber.Ctx) error
 	SignIn(c *fiber.Ctx) error
 	RefreshPassport(c *fiber.Ctx) error
+	SignOut(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -134,5 +136,29 @@ func (h *userHandler) RefreshPassport(c *fiber.Ctx) error {
 	return customresponse.NewResponse(c).Success(
 		fiber.StatusOK,
 		passport,
+	).Res()
+}
+
+func (h *userHandler) SignOut(c *fiber.Ctx) error {
+	req := new(entities.UserRemoveCredentials)
+	if err := c.BodyParser(req); err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(signOutErrCode),
+			err.Error(),
+		).Res()
+	}
+
+	if err := h.userUsecase.DeleteOauth(req.Id); err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(signOutErrCode),
+			err.Error(),
+		).Res()
+	}
+
+	return customresponse.NewResponse(c).Success(
+		fiber.StatusOK,
+		nil,
 	).Res()
 }

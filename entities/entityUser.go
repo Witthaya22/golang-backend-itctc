@@ -104,3 +104,7 @@ type UserProfile struct {
 func (UserProfile) TableName() string {
 	return "users"
 }
+
+type UserRemoveCredentials struct {
+	Id string `json:"oauthId" form:"oauthId"`
+}

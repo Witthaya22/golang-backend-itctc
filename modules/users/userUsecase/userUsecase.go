@@ -17,6 +17,7 @@ type IUserUsecase interface {
 	RegisterUser(req *entities.UserRegisterReq) (*entities.User, error)
 	GetPassport(req *entities.UserCredential) (*entities.UserPassport, error)
 	RefreshPassport(req *entities.UserRefresnCredential) (*entities.UserPassport, error)
+	DeleteOauth(oauthId string) error
 }
 
 type userUsecase struct {
@@ -199,4 +200,12 @@ func (u *userUsecase) RefreshPassport(req *entities.UserRefresnCredential) (*ent
 	log.Printf("Successfully updated oauth")
 
 	return passport, nil
+}
+
+func (u *userUsecase) DeleteOauth(oauthId string) error {
+	if err := u.userRepository.DeleteOauth(oauthId); err != nil {
+		log.Printf("Failed to delete oauth: %v", err)
+		return fmt.Errorf("failed to delete oauth: %v", err)
+	}
+	return nil
 }
