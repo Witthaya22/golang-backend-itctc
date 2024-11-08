@@ -52,4 +52,6 @@ func (m *moduleFactory) UserModule() {
 	router.Post("/login", handler.SignIn)
 	router.Post("/refresh", handler.RefreshPassport)
 	router.Post("/logout", handler.SignOut)
+
+	router.Post("/add-admin-role", m.mid.JwtAuth(), handler.AddAdminRole)
 }

@@ -22,6 +22,7 @@ type IUserRepository interface {
 	// GetProfile(userID string) (*entities.User, error)
 	GetProfile(userID string) (*entities.UserProfile, error)
 	DeleteOauth(oauthId string) error
+	AddAdminRole(userID string) error
 }
 
 type userRepository struct {
@@ -180,4 +181,9 @@ func (r *userRepository) DeleteOauth(oauthId string) error {
 	}
 
 	return nil
+}
+
+func (r *userRepository) AddAdminRole(userID string) error {
+	// Update user role to admin
+	return r.db.Model(&entities.User{}).Where("user_id = ?", userID).Update("role", "admin").Error
 }

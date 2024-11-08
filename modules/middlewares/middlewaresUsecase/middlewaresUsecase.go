@@ -3,6 +3,7 @@ package middlewaresusecase
 import middlewaresrepository "github.com/Witthaya22/golang-backend-itctc/modules/middlewares/middlewaresRepository"
 
 type IMiddlewaresUsecase interface {
+	FindAccessToken(userId, accessToken string) bool
 }
 
 type middlewaresUsecase struct {
@@ -13,4 +14,8 @@ func MiddlewaresUsecase(middlewareRepository middlewaresrepository.IMiddlewaresR
 	return &middlewaresUsecase{
 		middlewareRepository: middlewareRepository,
 	}
+}
+
+func (u *middlewaresUsecase) FindAccessToken(userId, accessToken string) bool {
+	return u.middlewareRepository.FindAccessToken(userId, accessToken)
 }

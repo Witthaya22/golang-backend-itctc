@@ -5,7 +5,7 @@ import (
 )
 
 type ActivityDetails struct {
-	ID          string    `gorm:"primaryKey;unique;not null"`
+	ID          string    `gorm:"primaryKey;unique;not null";autoIncrement;`
 	UserID      string    `gorm:"type:varchar(64);not null"`
 	ActivityID  string    `gorm:"type:varchar(64);not null"`
 	Reservation bool      `gorm:"not null"`

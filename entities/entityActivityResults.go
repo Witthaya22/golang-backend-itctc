@@ -5,7 +5,7 @@ import (
 )
 
 type ActivityResults struct {
-	ID           string    `gorm:"primaryKey;unique;not null"`
+	ID           string    `gorm:"primaryKey;unique;not null";autoIncrement;`
 	DepartmentID string    `gorm:"type:varchar(64);not null"`
 	UserID       string    `gorm:"type:varchar(64);not null"`
 	ActivityID   string    `gorm:"type:text;not null"`

@@ -1,6 +1,7 @@
 package userusecase
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -18,6 +19,7 @@ type IUserUsecase interface {
 	GetPassport(req *entities.UserCredential) (*entities.UserPassport, error)
 	RefreshPassport(req *entities.UserRefresnCredential) (*entities.UserPassport, error)
 	DeleteOauth(oauthId string) error
+	AddAdminRole(req *entities.User) error
 }
 
 type userUsecase struct {
@@ -207,5 +209,19 @@ func (u *userUsecase) DeleteOauth(oauthId string) error {
 		log.Printf("Failed to delete oauth: %v", err)
 		return fmt.Errorf("failed to delete oauth: %v", err)
 	}
+	return nil
+}
+
+func (u *userUsecase) AddAdminRole(req *entities.User) error {
+	// Validate request
+	if req.UserID == "" {
+		return errors.New("user ID is required")
+	}
+
+	// Add admin role to user
+	if err := u.userRepository.AddAdminRole(req.UserID); err != nil {
+		return fmt.Errorf("failed to add admin role: %v", err)
+	}
+
 	return nil
 }

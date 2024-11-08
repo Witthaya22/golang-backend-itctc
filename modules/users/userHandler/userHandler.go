@@ -17,6 +17,7 @@ const (
 	signInErrCode          userHandlerErrCode = "user-002"
 	refreshPassportErrCode userHandlerErrCode = "user-003"
 	signOutErrCode         userHandlerErrCode = "user-004"
+	addAdminRoleErrCode    userHandlerErrCode = "user-005"
 )
 
 type IUserHandler interface {
@@ -24,6 +25,7 @@ type IUserHandler interface {
 	SignIn(c *fiber.Ctx) error
 	RefreshPassport(c *fiber.Ctx) error
 	SignOut(c *fiber.Ctx) error
+	AddAdminRole(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -153,6 +155,32 @@ func (h *userHandler) SignOut(c *fiber.Ctx) error {
 		return customresponse.NewResponse(c).Error(
 			fiber.ErrBadRequest.Code,
 			string(signOutErrCode),
+			err.Error(),
+		).Res()
+	}
+
+	return customresponse.NewResponse(c).Success(
+		fiber.StatusOK,
+		nil,
+	).Res()
+}
+
+func (h *userHandler) AddAdminRole(c *fiber.Ctx) error {
+	// Parse request
+	req := new(entities.User)
+	if err := c.BodyParser(req); err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(addAdminRoleErrCode),
+			"invalid request format",
+		).Res()
+	}
+
+	// Add admin role to user
+	if err := h.userUsecase.AddAdminRole(req); err != nil {
+		return customresponse.NewResponse(c).Error(
+			fiber.ErrInternalServerError.Code,
+			string(addAdminRoleErrCode),
 			err.Error(),
 		).Res()
 	}
